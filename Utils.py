@@ -116,40 +116,43 @@ def drawGraph(graph, out_path, ccode_dict, color_map=None):
     plt.savefig(out_path)
     plt.close()
 
-def drawSinglePlot(graph, out_path, ccode_dict, color_map=None):
-    # Get positions for the nodes in the graph
-    pos = nx.spring_layout(graph)
 
-    # Draw the graph in a single plot. Using a palette to represent the weights of the edges. And use the color_map to color the nodes.
+def drawSinglePlot(graph, out_path, ccode_dict, color_map):
+    # Identify unique colors (clusters) in the color map
+    unique_colors = list(set(color_map))
+    clusters = {color: [] for color in unique_colors}
+
+    # Group nodes by their cluster color
+    for node, color in zip(graph.nodes(), color_map):
+        clusters[color].append(node)
+
+    # Create a supergraph where each cluster is a node
+    supergraph = nx.cycle_graph(len(clusters))
+    superpos = nx.spring_layout(supergraph, scale=10, seed=429)
+
+    # Use the supernode positions as the center of each node cluster
+    centers = list(superpos.values())
+    pos = {}
+
+    for center, (color, nodes) in zip(centers, clusters.items()):
+        subgraph = graph.subgraph(nodes)
+        sub_pos = nx.spring_layout(subgraph, center=center, scale=10, seed=1430)  # Increase scale for spacing
+        pos.update(sub_pos)
+
+    # Draw the graph
     plt.figure(figsize=(20, 10))
     plt.title("Graph Representation of DataFrame")
 
-    # Draw the edges with a color palette based on the weight of the edge
-    edges = graph.edges()
-    weights = [graph[u][v]['weight'] for u, v in edges]
-    edge_colors = [weight for weight in weights]
+    # Draw nodes with the color map
+    for color in unique_colors:
+        nodes = clusters[color]
+        nx.draw_networkx_nodes(graph, pos=pos, nodelist=nodes, node_color=color, node_size=100)
 
-    # Draw the edges
-    nx.draw_networkx_edges(graph, pos, edgelist=edges, edge_color=edge_colors, edge_cmap='magma', edge_vmin=min(weights), edge_vmax=max(weights))
+    # Draw node labels with adjusted vertical alignment
+    label_pos = {k: (v[0], v[1] - 0.9) for k, v in pos.items()}  # Offset the label position slightly below the node
+    nx.draw_networkx_labels(graph, label_pos, font_size=10, labels=ccode_dict, font_color='black',
+                            verticalalignment='center')
 
-    # Draw the nodes with color mapping if color_map is not None
-    if color_map is not None:
-        # If color_map is a dictionary, extract colors in the order of nodes
-        if isinstance(color_map, dict):
-            node_colors = [color_map.get(node, 'black') for node in graph.nodes()]
-        else:
-            # If color_map is a list or a sequence, use it directly
-            node_colors = color_map
-    else:
-        # Default color is black if color_map is None
-        node_colors = 'black'
-
-    # Use node_colors for the node_color parameter
-    nx.draw_networkx_nodes(graph, pos, node_color=node_colors, node_size=100)
-
-    # draw node labels on the graph. And move the labels a little bit away from the nodes
-    nx.draw_networkx_labels(graph, pos, font_size=10, labels=ccode_dict, font_color='black', verticalalignment='bottom')
-
-    # Show the plot
+    # Save the plot
     plt.savefig(out_path)
     plt.close()

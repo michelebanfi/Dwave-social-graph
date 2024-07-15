@@ -5,7 +5,7 @@ import numpy as np
 from dwave.system import LeapHybridCQMSampler
 from dimod import ConstrainedQuadraticModel, Binary
 
-from Utils import dataPreparation, drawGraph
+from Utils import dataPreparation, drawGraph, drawSinglePlot
 
 data = dataPreparation("Dyadic_COW_4.0.csv")
 
@@ -25,7 +25,7 @@ ccode_dictReversed = {v: k for k, v in ccode_dict.items()}
 
 # Draw the graph
 print("Plotting the graph")
-drawGraph(G, "graph.png", ccode_dict)
+drawGraph(G, "Media/graph.png", ccode_dict)
 
 # print the number of nodes
 print("Nodes present in the graph: ", len(G.nodes))
@@ -78,7 +78,7 @@ new_ccode_dict = {k: v for k, v in ccode_dict.items() if k in G.nodes}
 
 # Draw the graph
 print("Plotting the graph")
-drawGraph(G, "prunedGraph.png", new_ccode_dict)
+drawGraph(G, "Media/prunedGraph.png", new_ccode_dict)
 
 # Define the number of clusters
 num_clusters = 3  # You can change this to 4 or another number
@@ -129,7 +129,6 @@ print("Named Clusters: ", clusters_named)
 for i in range(num_clusters):
     print(len(clusters_named[i]))
 
-
 # Ensure each nation is in only one cluster
 seen_nodes = set()
 for i in range(num_clusters):
@@ -153,3 +152,36 @@ for i in range(num_clusters):
     print(len(clusters[i]))
     tot += len(clusters[i])
 print("Total number of elements: ",tot)
+
+# save the clustering solution
+with open("clusters.txt", "w") as f:
+    for i in range(num_clusters):
+        f.write(f"Cluster {i}:\n")
+        for node in clusters[i]:
+            f.write(f"{ccode_dict[node]}\n")
+        f.write("\n")
+
+# save the clustering solution
+with open("Media/clusters.txt", "w") as f:
+    for i in range(num_clusters):
+        f.write(f"Cluster {i}:\n")
+        for node in clusters[i]:
+            f.write(f"{ccode_dict[node]}\n")
+        f.write("\n")
+
+# Draw the graph with the clusters
+# we have the best solution, now we need to plot the graph with the best solution. Use a different color for each cluster
+color_map = []
+for node in G.nodes:
+    if node in clusters[0]:
+        color_map.append('blue')
+    elif node in clusters[1]:
+        color_map.append('orange')
+    elif node in clusters[2]:
+        color_map.append('green')
+    else:
+        color_map.append('black')
+
+# Draw the graph
+print("Plotting the graph")
+drawSinglePlot(G, "Media/clustered_prunedGraph.png", new_ccode_dict, color_map)
