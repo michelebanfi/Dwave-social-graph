@@ -1,0 +1,61 @@
+Cluster 0:
+United States of America
+Mexico
+Colombia
+Peru
+Chile
+United Kingdom
+Ireland
+Belgium
+Luxembourg
+France
+Portugal
+Hungary
+Czech Republic
+Romania
+Estonia
+Latvia
+Lithuania
+Finland
+Iceland
+Turkey
+China
+Taiwan
+Japan
+Malaysia
+Singapore
+New Zealand
+
+Cluster 1:
+Canada
+Argentina
+Poland
+Croatia
+Slovenia
+Greece
+Bulgaria
+Russia
+Sweden
+Denmark
+Saudi Arabia
+Thailand
+Philippines
+Indonesia
+Australia
+
+Cluster 2:
+Netherlands
+Switzerland
+Spain
+Germany
+Austria
+Slovakia
+Italy
+Malta
+Cyprus
+Norway
+South Africa
+South Korea
+India
+Brazil
+
