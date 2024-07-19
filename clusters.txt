@@ -1,27 +1,21 @@
 Cluster 0:
 United States of America
-Mexico
 Colombia
 Peru
 Chile
 United Kingdom
 Ireland
-Belgium
-Luxembourg
-France
-Portugal
 Hungary
 Czech Republic
+Croatia
 Romania
 Estonia
 Latvia
 Lithuania
 Finland
+Denmark
 Iceland
-Turkey
 China
-Taiwan
-Japan
 Malaysia
 Singapore
 New Zealand
@@ -29,33 +23,39 @@ New Zealand
 Cluster 1:
 Canada
 Argentina
-Poland
-Croatia
+Switzerland
 Slovenia
-Greece
 Bulgaria
 Russia
 Sweden
-Denmark
+South Africa
+Turkey
 Saudi Arabia
+Taiwan
+South Korea
+Japan
+India
 Thailand
 Philippines
 Indonesia
 Australia
 
 Cluster 2:
+Mexico
+Brazil
 Netherlands
-Switzerland
+Belgium
+Luxembourg
+France
 Spain
+Portugal
 Germany
+Poland
 Austria
 Slovakia
 Italy
 Malta
+Greece
 Cyprus
 Norway
-South Africa
-South Korea
-India
-Brazil
 
