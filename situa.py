@@ -154,14 +154,6 @@ for i in range(num_clusters):
 print("Total number of elements: ",tot)
 
 # save the clustering solution
-with open("clusters.txt", "w") as f:
-    for i in range(num_clusters):
-        f.write(f"Cluster {i}:\n")
-        for node in clusters[i]:
-            f.write(f"{ccode_dict[node]}\n")
-        f.write("\n")
-
-# save the clustering solution
 with open("Media/clusters.txt", "w") as f:
     for i in range(num_clusters):
         f.write(f"Cluster {i}:\n")

@@ -6,6 +6,7 @@ from dwave.system import LeapHybridCQMSampler
 from dimod import ConstrainedQuadraticModel, Binary
 from sklearn.preprocessing import MinMaxScaler
 import geopandas as gpd
+from sklearn.metrics import silhouette_score
 
 from Utils import dataPreparation, drawGraph, drawSinglePlot
 
@@ -81,6 +82,15 @@ print("Remaining edges: ", len(G.edges))
 
 # recalculate ccode_dict, accounting for the removed nodes
 new_ccode_dict = {k: v for k, v in ccode_dict.items() if k in G.nodes}
+
+# create a distance matrix from the graph
+distance_matrix = np.zeros((len(G.nodes), len(G.nodes)))
+for i, node1 in enumerate(G.nodes):
+    for j, node2 in enumerate(G.nodes):
+        try:
+            distance_matrix[i, j] = nx.shortest_path_length(G, node1, node2, weight='weight')
+        except:
+            distance_matrix[i, j] = 0
 
 # Draw the graph
 print("Plotting the graph")
@@ -223,3 +233,45 @@ plt.axis('off')
 plt.legend().set_visible(False)
 plt.savefig('Media/world_map.png')
 plt.close()
+
+clusters_named = {0: ['Canada', 'Mexico', 'Ireland', 'Belgium', 'Luxembourg', 'France', 'Switzerland', 'Spain', 'Portugal', 'Germany', 'Poland', 'Austria', 'Slovakia', 'Italy', 'Malta', 'Slovenia', 'Greece', 'Cyprus', 'Bulgaria', 'Sweden', 'Norway', 'Iceland', 'Saudi Arabia', 'South Korea', 'Philippines'], 1: ['Colombia', 'Chile', 'United Kingdom', 'Netherlands', 'Hungary', 'Czech Republic', 'Croatia', 'Romania', 'Estonia', 'Latvia', 'Finland', 'China', 'Taiwan', 'Japan', 'India', 'Thailand', 'Malaysia', 'Singapore'], 2: ['United States of America', 'Peru', 'Argentina', 'Russia', 'Lithuania', 'Denmark', 'Turkey', 'Indonesia', 'Australia', 'New Zealand', 'South Africa', 'Brazil']}
+
+# Create a dictionary that maps each country to its cluster
+country_to_cluster = {country: cluster for cluster, countries in clusters_named.items() for country in countries}
+
+# Create a list of cluster labels for each country
+cluster_labels = [country_to_cluster[country] for country in new_ccode_dict.values()]
+
+# # take the data[['flow1_pct_change_normalized']] only for the countries that are in the graph
+# trimmed_data = data[data['ccode1'].isin(new_ccode_dict.keys())]
+# trimmed_data = trimmed_data[trimmed_data['ccode2'].isin(new_ccode_dict.keys())]
+
+# Calculate the silhouette score
+silh = silhouette_score(distance_matrix, cluster_labels)
+
+print("Silhouette Score: ", silh)
+
+# return the energy of the best solution
+print("Energy of the best solution: ", sampleset.first.energy)
+
+# return the number of solutions
+print("Number of solutions: ", len(sampleset))
+
+# return the number of occurrences of the best solution
+print("Occurrences of the best solution: ", sampleset.first.num_occurrences)
+
+# plot the energies of the solutions
+energies = sampleset.record.energy
+
+# print the energies
+print(energies)
+
+plt.figure(figsize=(10, 5))
+plt.hist(energies, bins=50, color='blue', edgecolor='black')
+plt.title('Energy distribution')
+plt.xlabel('Energy')
+plt.ylabel('Frequency')
+plt.savefig('Media/energy_distribution.png')
+plt.close()
+
+
